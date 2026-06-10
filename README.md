@@ -1,6 +1,6 @@
 # Stock Strategy Agent
 
-An agent design for reading market data, analyzing chart structure, testing strategy templates, and ranking the most suitable trading approaches for a given symbol and timeframe.
+A runnable Python prototype for reading market data, analyzing chart structure, testing strategy templates, and ranking the most suitable trading approaches for a given symbol and timeframe.
 
 ## What It Does
 
@@ -10,6 +10,9 @@ An agent design for reading market data, analyzing chart structure, testing stra
 - Backtests each candidate with walk-forward validation
 - Ranks strategies by return, drawdown, stability, and regime fit
 - Explains the result in plain language
+- Runs from a simple CLI
+- Accepts optional OHLCV CSV input
+- Falls back to deterministic demo data if no file is provided
 
 ## What It Does Not Do
 
@@ -80,12 +83,33 @@ The output includes:
 ## Recommended Tech Stack
 
 - Backend: Python
-- API: FastAPI
-- Data: pandas, numpy
-- Indicators: pandas-ta or custom implementations
-- Backtesting: vectorbt, backtrader, or custom event-driven simulation
-- Storage: PostgreSQL for metadata, Parquet for time series
+- API: FastAPI, if you want to expose this as a service later
+- Data: standard library now, pandas and numpy later if you need more depth
+- Indicators: custom implementations in the `stock_agent` package
+- Backtesting: custom event-driven simulation
+- Storage: CSV or Parquet for time series, PostgreSQL later if needed
 - UI: Streamlit or React dashboard
+
+## Run It
+
+```bash
+python main.py --symbol AAPL --timeframe 1d
+```
+
+Use a CSV file with these columns if you want real bars:
+
+- `timestamp`
+- `open`
+- `high`
+- `low`
+- `close`
+- `volume`
+
+Example:
+
+```bash
+python main.py --symbol AAPL --timeframe 1d --csv data/AAPL_1d.csv
+```
 
 ## MVP Scope
 
@@ -116,10 +140,8 @@ Invalidation: close back below prior resistance
 
 ## Next Steps
 
-1. Build the data fetcher
-2. Compute indicators and regime labels
-3. Implement three strategy templates
-4. Add backtesting and scoring
-5. Add a minimal dashboard
-6. Connect GitHub and publish the repo
-
+1. Swap the demo data loader for a real market-data provider
+2. Add walk-forward validation and parameter sweeps
+3. Add a dashboard or API wrapper
+4. Add alerting and portfolio-level risk controls
+5. Connect GitHub and publish the repo
